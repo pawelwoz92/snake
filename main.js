@@ -9,6 +9,7 @@ let highScore = Number(localStorage.getItem("snakeHighScore")) || 3;
 let gameLoop;
 
 highScoreDisplay.textContent = `HI ${highScore}`;
+overlayText.textContent = `HIGH SCORE: ${highScore}`;
 
 startButton.addEventListener("click", function(){
     reset();
@@ -104,28 +105,39 @@ return;
 }
 
 
+function changeDirection(key) {
+    if (key === "w" && direction.y !== 1) {
+        direction.x = 0;
+        direction.y = -1;
+    }
 
+    if (key === "s" && direction.y !== -1) {
+        direction.x = 0;
+        direction.y = 1;
+    }
+
+    if (key === "a" && direction.x !== 1) {
+        direction.x = -1;
+        direction.y = 0;
+    }
+
+    if (key === "d" && direction.x !== -1) {
+        direction.x = 1;
+        direction.y = 0;
+    }
+        updateControls();
+}
 
 document.addEventListener("keydown",function(event){
-    if (event.key === "w" && direction.y !== 1){
-           direction.x = 0;
-           direction.y = -1;
-    }
-      if (event.key === "s" && direction.y !== -1){
-        direction.x = 0;
-           direction.y = 1;
-    
-    }
-      if (event.key === "a" && direction.x !== 1 ){
-        direction.x = -1;
-           direction.y = 0;
-    }
-      if (event.key === "d" && direction.x !== -1){
-        direction.x = 1;
-           direction.y = 0;
-    }
+changeDirection(event.key);
    
 })
+
+document.querySelectorAll("#controls button").forEach((button) => {
+    button.addEventListener("click", function() {
+        changeDirection(button.dataset.dir);
+    });
+});
 
 function render(){
     game.innerHTML = "";
@@ -152,6 +164,34 @@ function render(){
 }
 
 }
+function updateControls() {
+    document.querySelectorAll("#controls button").forEach((button) => {
+        button.classList.remove("active");
+    });
 
+    let currentDirection;
+
+    if (direction.x === 1) {
+        currentDirection = "d";
+    }
+
+    if (direction.x === -1) {
+        currentDirection = "a";
+    }
+
+    if (direction.y === 1) {
+        currentDirection = "s";
+    }
+
+    if (direction.y === -1) {
+        currentDirection = "w";
+    }
+
+    const activeButton = document.querySelector(
+        `#controls button[data-dir="${currentDirection}"]`
+    );
+
+    activeButton.classList.add("active");
+}
 // let gameLoop = setInterval(move,200);
 render();
